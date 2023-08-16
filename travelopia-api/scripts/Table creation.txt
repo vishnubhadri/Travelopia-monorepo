@@ -2,12 +2,14 @@ CREATE TABLE country (
     id INT PRIMARY KEY AUTO_INCREMENT,
     country_name VARCHAR(255) NOT NULL,
     country_image_url VARCHAR(255),
-    description TEXT
+    description TEXT,
+    is_active boolean DEFAULT 1,
 );
 
 CREATE TABLE state_of_vacation (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    stage_name VARCHAR(255) NOT NULL
+    stage_name VARCHAR(255) NOT NULL,
+    is_active boolean
 );
 
 CREATE TABLE enquiry_records (
