@@ -1,17 +1,27 @@
 const CountryService=require('../service/CountryService')
 class CountryRouterHandler{
-  update( req, res, next){
-    
+  constructor(){
+    this.CountryService=new CountryService();
   }
-  async fetch( req, res, next){
-    const response=await new CountryService().fetchCountries(req);
+
+  async update( req, res, next){
+    const response=await this.CountryService.updateCountry(req);
     res.send(response)
   }
-  delete( req, res, next){
 
+  async fetch( req, res, next){
+    const response=await this.CountryService.fetchCountries(req);
+    res.send(response)
   }
-  insert( req, res, next){
 
+  async delete( req, res, next){
+    const response=await this.CountryService.deleteCountries(req);
+    res.send(response)
+  }
+  
+  async insert( req, res, next){
+    const response=await this.CountryService.addCountry(req);
+    res.send(response)
   }
 }
 module.exports=new CountryRouterHandler()

@@ -38,12 +38,17 @@ class CountryDataAccessor {
         try {
             const connection = await pool.getConnection();
             const [result] = await connection.query('UPDATE countries SET is_active = 0 WHERE id = ?', [countryId]);
+            
+            // Update status of related enquiry records to "Archive"
+            const [updateEnquiries] = await connection.query('UPDATE enquiry_records SET status_of_enquiry = ? WHERE country_id = ?', ['Archive', countryId]);
+            
             connection.release();
             return result;
         } catch (err) {
             throw new Error(err);
         }
     }
+    
 
 }
 

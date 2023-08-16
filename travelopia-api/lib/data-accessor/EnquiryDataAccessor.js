@@ -1,9 +1,10 @@
-// const { connection } = require('../database/mysql'); // Import your database configuration
+const { pool } = require('../database/mysql'); // Import your database configuration
 
-class CountryDataAccessor {
+class EnquiryDataAccessor {
     async fetch() {
         try {
-            // const [rows] = await connection.query(`SELECT id,country_name,country_image_url,description,is_active FROM countries WHERE is_active = 1`);
+            // Implement your fetch logic here
+            // const [rows] = await connection.query(`SELECT id, full_name, email, country_id, ... FROM enquiry_records WHERE ...`);
             // connection.release();
             // return rows;
             return 'Apple';
@@ -12,10 +13,10 @@ class CountryDataAccessor {
         }
     }
 
-    async insert(countryData) {
+    async insert(enquiryData) {
         try {
             const connection = await pool.getConnection();
-            const [result] = await connection.query('INSERT INTO countries SET ?', countryData);
+            const [result] = await connection.query('INSERT INTO enquiry_records SET ?', enquiryData);
             connection.release();
             return result;
         } catch (err) {
@@ -23,10 +24,10 @@ class CountryDataAccessor {
         }
     }
 
-    async update(countryId, updateData) {
+    async update(enquiryId, updateData) {
         try {
             const connection = await pool.getConnection();
-            const [result] = await connection.query('UPDATE countries SET ? WHERE id = ?', [updateData, countryId]);
+            const [result] = await connection.query('UPDATE enquiry_records SET ? WHERE id = ?', [updateData, enquiryId]);
             connection.release();
             return result;
         } catch (err) {
@@ -38,13 +39,16 @@ class CountryDataAccessor {
         try {
             const connection = await pool.getConnection();
             const [result] = await connection.query('UPDATE countries SET is_active = 0 WHERE id = ?', [countryId]);
+            
+            // Update status of related enquiry records to "Archive"
+            const [updateEnquiries] = await connection.query('UPDATE enquiry_records SET status_of_enquiry = ? WHERE country_id = ?', ['Archive', countryId]);
+            
             connection.release();
             return result;
         } catch (err) {
             throw new Error(err);
         }
     }
+    }
 
-}
-
-module.exports = CountryDataAccessor;
+module.exports = EnquiryDataAccessor;

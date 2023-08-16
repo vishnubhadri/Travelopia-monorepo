@@ -24,6 +24,7 @@ CREATE TABLE enquiry_records (
     stage_id INT,
     phone_number VARCHAR(20) DEFAULT null,
     number_of_travelers INT DEFAULT 1,
+    status_of_enquiry ENUM('Pending', 'Inprogress', 'Completed','Archive') DEFAULT 'Pending',
     FOREIGN KEY (country_id) REFERENCES country(id),
     FOREIGN KEY (stage_id) REFERENCES state_of_vacation(id)
 );
