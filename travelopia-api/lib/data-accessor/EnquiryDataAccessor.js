@@ -1,4 +1,4 @@
-const { pool } = require('../database/mysql'); // Import your database configuration
+// const { pool } = require('../database/mysql'); // Import your database configuration
 
 class EnquiryDataAccessor {
     async fetch() {
@@ -15,7 +15,6 @@ class EnquiryDataAccessor {
 
     async insert(enquiryData) {
         try {
-            const connection = await pool.getConnection();
             const [result] = await connection.query('INSERT INTO enquiry_records SET ?', enquiryData);
             connection.release();
             return result;
@@ -26,29 +25,43 @@ class EnquiryDataAccessor {
 
     async update(enquiryId, updateData) {
         try {
-            const connection = await pool.getConnection();
+            await connection.beginTransaction(); // Begin transaction
+
             const [result] = await connection.query('UPDATE enquiry_records SET ? WHERE id = ?', [updateData, enquiryId]);
+            await connection.commit(); // Commit transaction
+
             connection.release();
             return result;
         } catch (err) {
+            if (connection) {
+                await connection.rollback(); // Rollback transaction in case of failure
+                connection.release();
+            }
             throw new Error(err);
         }
     }
 
     async softDelete(countryId) {
         try {
-            const connection = await pool.getConnection();
+            await connection.beginTransaction(); // Begin transaction
+
             const [result] = await connection.query('UPDATE countries SET is_active = 0 WHERE id = ?', [countryId]);
-            
+
             // Update status of related enquiry records to "Archive"
             const [updateEnquiries] = await connection.query('UPDATE enquiry_records SET status_of_enquiry = ? WHERE country_id = ?', ['Archive', countryId]);
             
+            await connection.commit(); // Commit transaction
+
             connection.release();
             return result;
         } catch (err) {
+            if (connection) {
+                await connection.rollback(); // Rollback transaction in case of failure
+                connection.release();
+            }
             throw new Error(err);
         }
     }
-    }
+}
 
 module.exports = EnquiryDataAccessor;

@@ -1,17 +1,17 @@
 var express = require('express');
 var router = express.Router();
 
-const country=require('./CountryRouterHandler');
+const countryRouterHandler=require('./CountryRouterHandler');
 const enquiryRouterHandler=require('./EnquiryRouterHandler');
-const stateOfVacationRouterHandler = require('../router-handler/StateOfVacationRouterHandler');
+const stateOfVacationRouterHandler = require('./StateOfVacationRouterHandler');
 
 
 // GET all countries
-router.get('/countries', country.fetch);
+router.get('/countries', countryRouterHandler.fetch);
 // POST a new country
-router.post('/_countries', country.insert);
+router.post('/_countries', countryRouterHandler.insert);
 // PUT update for a country
-router.put('/_countries/:id', country.update);
+router.put('/_countries/:id', countryRouterHandler.update);
 
 // Create enquiry
 router.post('/enquiry',  enquiryRouterHandler.insert);
