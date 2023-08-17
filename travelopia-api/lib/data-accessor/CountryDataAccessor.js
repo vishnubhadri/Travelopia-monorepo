@@ -8,7 +8,7 @@ class CountryDataAccessor {
             if (CountryCacheAccessor.findCache('fetch_all_country')) {
                 return CountryCacheAccessor.get('fetch_all_country');
             } else {
-                const [rows] = await  connectionPool.query(`SELECT id,country_name,country_image_url,description,is_active FROM country WHERE is_active = 1`);
+                const [rows] = await  connectionPool.query(`SELECT id,country_name,country_image_url,description  FROM country WHERE is_active = 1`);
                 CountryCacheAccessor.set('fetch_all_country', rows);
                 return rows;
             }
