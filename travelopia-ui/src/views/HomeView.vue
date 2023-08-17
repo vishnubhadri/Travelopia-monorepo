@@ -6,4 +6,10 @@
 
 <script setup lang="ts">
 import HomeBackground from '@/components/HomeComponents/HomeBackground.vue'
+import { onMounted } from 'vue'
+import { useCountryStore } from '@/stores'
+
+onMounted(() => {
+  useCountryStore().getCountryList()
+})
 </script>

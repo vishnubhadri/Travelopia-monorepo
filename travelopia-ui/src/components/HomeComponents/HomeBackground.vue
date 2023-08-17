@@ -1,36 +1,44 @@
 <template>
-  <V-card elevation="1" width="fit-content">
-    <Search v-model:selectedLocation="selectedLocation" />
-  </V-card>
+  <v-card width="fit-content" class="card">
+    <v-card-text>
+      <v-row align="center" no-gutters>
+        <v-slide-x-transition>
+          <v-col>
+            <v-expand-transition>
+              <template v-if="search">
+                <Search @next="showEnquiry" />
+              </template>
+              <template v-else>
+                <Enquiry @back="hideEnquiry" />
+              </template>
+            </v-expand-transition>
+          </v-col>
+        </v-slide-x-transition>
+      </v-row>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup lang="ts">
-import Search from '@/components/HomeComponents/Search.vue';
-import { ref,computed } from 'vue';
+import Search from '@/components/HomeComponents/Search.vue'
+import Enquiry from '@/components/HomeComponents/Enquiry.vue'
+import { onMounted, ref } from 'vue'
 
-const selectedLocation = ref('');
+let search = ref(true)
 
-// Define a computed property to calculate the background image URL
-const backgroundImageUrl = computed(() => {
-  // Map location names to corresponding image URLs
-  const locationImages = {
-    'Country1': 'url-to-image1.jpg',
-    'Country2': 'url-to-image2.jpg',
-    // Add more locations and image URLs as needed
-  };
-
-  // Return the appropriate image URL based on the selected location
-  return locationImages[selectedLocation.value] || 'https://w.forfun.com/fetch/12/1257650a038c0af4e751c1fa8d1477cf.jpeg';
-});
-</script>
-
-<style lang="scss">
-body {
-  background: var(--background-image, url('https://w.forfun.com/fetch/12/1257650a038c0af4e751c1fa8d1477cf.jpeg'));
-  background-size: cover;
+function showEnquiry() {
+  search.value = false
 }
 
-html {
-  overflow: hidden;
+function hideEnquiry() {
+  search.value = true
+}
+</script>
+
+<style scoped>
+.card {
+  position: absolute;
+  top: 60px;
+  left: 60px;
 }
 </style>
