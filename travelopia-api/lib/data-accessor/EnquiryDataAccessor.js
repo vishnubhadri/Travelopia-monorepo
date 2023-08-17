@@ -44,6 +44,25 @@ class EnquiryDataAccessor {
         }
     }
 
+    async updateStatus(enquiryId, enquiryStatus) {
+        const pool = connection.getConnection();
+        try {
+            await pool.beginTransaction(); // Begin transaction
+
+            const [result] = await pool.query('UPDATE enquiry_records SET status_of_enquiry = ? WHERE id = ?', [enquiryStatus, enquiryId]);
+            await pool.commit(); // Commit transaction
+
+            return result;
+        } catch (err) {
+            if (pool) {
+                await pool.rollback(); // Rollback transaction in case of failure
+            }
+            throw new Error(err);
+        } finally {
+            pool.release();
+        }
+    }
+
     async softDelete(enquiryId) {
         const pool = connection.getConnection();
         try {

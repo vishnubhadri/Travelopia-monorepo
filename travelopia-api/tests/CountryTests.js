@@ -18,7 +18,7 @@ describe('CountryService', function () {
 
     it('should fetch countries', async function () {
         const fetchStub = this.sandbox.stub(countryService.CountryDataAccessor, 'fetch').resolves([{ id: 1, name: 'Country 1' }]);
-        
+
         const countries = await countryService.fetchCountries();
 
         assert.deepEqual(countries, [{ id: 1, name: 'Country 1' }]);
@@ -27,7 +27,7 @@ describe('CountryService', function () {
 
     it('should update a country', async function () {
         const updateStub = this.sandbox.stub(countryService.CountryDataAccessor, 'update').resolves({ affectedRows: 1 });
-        
+
         const result = await countryService.updateCountry({ countryId: 1, updateData: { name: 'Updated Country' } });
 
         assert.deepEqual(result, { affectedRows: 1 });
@@ -36,7 +36,7 @@ describe('CountryService', function () {
 
     it('should delete countries', async function () {
         const softDeleteStub = this.sandbox.stub(countryService.CountryDataAccessor, 'softDelete').resolves({ affectedRows: 1 });
-        
+
         const result = await countryService.deleteCountries({ id: 1 });
 
         assert.deepEqual(result, { affectedRows: 1 });
@@ -45,10 +45,10 @@ describe('CountryService', function () {
 
     it('should add a country', async function () {
         const insertStub = this.sandbox.stub(countryService.CountryDataAccessor, 'insert').resolves({ insertId: 3 });
-        
+
         const result = await countryService.addCountry({ countryData: { name: 'New Country' } });
 
         assert.deepEqual(result, { insertId: 3 });
         assert.isTrue(insertStub.calledOnce);
     });
-});
+})
