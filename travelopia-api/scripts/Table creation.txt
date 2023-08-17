@@ -1,9 +1,13 @@
+CREATE DATABASE IF NOT EXISTS travelopia;
+
+USE travelopia;
+
 CREATE TABLE country (
     id INT PRIMARY KEY AUTO_INCREMENT,
     country_name VARCHAR(255) NOT NULL,
     country_image_url VARCHAR(255),
     description TEXT,
-    is_active boolean DEFAULT 1,
+    is_active boolean DEFAULT 1
 );
 
 CREATE TABLE state_of_vacation (

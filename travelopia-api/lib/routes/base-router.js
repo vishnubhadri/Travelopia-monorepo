@@ -1,31 +1,53 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-const countryRouterHandler=require('./CountryRouterHandler');
-const enquiryRouterHandler=require('./EnquiryRouterHandler');
-const stateOfVacationRouterHandler = require('./StateOfVacationRouterHandler');
+const countryRouterHandler = require("./CountryRouterHandler");
+const enquiryRouterHandler = require("./EnquiryRouterHandler");
+const stateOfVacationRouterHandler = require("./StateOfVacationRouterHandler");
 
+const { validateCountryRequest } = require("../schema/validateCountrySchema");
+const { validateEnquiryRequest } = require("../schema/enquiryRecordsSchema");
+const { validatestateOfVacationRequest } = require("../schema/stateOfVacationSchema");
 
 // GET all countries
-router.get('/countries', countryRouterHandler.fetch);
+router.get("/countries", countryRouterHandler.fetch);
 // POST a new country
-router.post('/_countries', countryRouterHandler.insert);
+router.post("/_countries", validateCountryRequest, countryRouterHandler.insert);
 // PUT update for a country
-router.put('/_countries/:id', countryRouterHandler.update);
+router.put(
+  "/_countries/:id",
+  validateCountryRequest,
+  countryRouterHandler.update
+);
+router.delete("/_countries/:id", countryRouterHandler.delete);
 
 // Create enquiry
-router.post('/enquiry',  enquiryRouterHandler.insert);
+router.post("/enquiry", validateEnquiryRequest, enquiryRouterHandler.insert);
 // GET all enquiries
-router.get('/_enquiry', enquiryRouterHandler.fetch);
+router.get("/_enquiry", enquiryRouterHandler.fetch);
 // PUT update for an enquiry
-router.put('/_enquiry/:id',  enquiryRouterHandler.update);
+router.put("/_enquiry/:id", validateEnquiryRequest, enquiryRouterHandler.update);
 // PUT update status for an enquiry
-router.put('/_enquiry/:id/status',  enquiryRouterHandler.updateStatus);
+router.put("/_enquiry/:id/status", enquiryRouterHandler.updateStatus);
 
-router.get('/vacation-status', stateOfVacationRouterHandler.fetch.bind(stateOfVacationRouterHandler));
-router.post('/_vacation-status', stateOfVacationRouterHandler.insert.bind(stateOfVacationRouterHandler));
-router.put('/_vacation-status/:id', stateOfVacationRouterHandler.update.bind(stateOfVacationRouterHandler));
-router.delete('/_vacation-status/:id', stateOfVacationRouterHandler.delete.bind(stateOfVacationRouterHandler));
-
+router.get(
+  "/vacation-status",
+  stateOfVacationRouterHandler.fetch.bind(stateOfVacationRouterHandler)
+);
+router.post(
+  "/_vacation-status",
+  validatestateOfVacationRequest,
+  stateOfVacationRouterHandler.insert.bind(stateOfVacationRouterHandler)
+);
+router.put(
+  "/_vacation-status/:id",
+  validatestateOfVacationRequest,
+  stateOfVacationRouterHandler.update.bind(stateOfVacationRouterHandler)
+);
+router.delete(
+  "/_vacation-status/:id",
+  validatestateOfVacationRequest,
+  stateOfVacationRouterHandler.delete.bind(stateOfVacationRouterHandler)
+);
 
 module.exports = router;
