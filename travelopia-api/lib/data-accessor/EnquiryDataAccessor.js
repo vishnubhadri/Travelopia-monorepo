@@ -1,32 +1,38 @@
 const { pool } = require('../database/mysql'); // Import your database configuration
-
+const StateOfVacationDataAccessor = require('./StateOfVacationDataAccessor')
 class EnquiryDataAccessor {
     async fetch() {
-        const connectionPool = pool.promise();
+        const connectionPool =await pool.getConnection();
         try {
             const [rows] = await connectionPool.query('SELECT * FROM enquiry_records');
             return rows;
         } catch (err) {
             throw new Error(err);
         } finally {
-            connectionPool.releaseConnection();
+            await connectionPool.release()
         }
     }
 
     async insert(enquiryData) {
-        const connectionPool = connectionPool.promise();
+        const connectionPool = await pool.getConnection();
         try {
+            const existingStage=await new StateOfVacationDataAccessor().fetchById(enquiryData.stage_id);
+    
+            if (!existingStage||!existingStage.length) {
+                throw new Error('stage_id not exist');
+            }
+
             const [result] = await connectionPool.query('INSERT INTO enquiry_records SET ?', enquiryData);
             return result;
         } catch (err) {
             throw new Error(err);
         } finally {
-            connectionPool.releaseConnection();
+            connectionPool.release();
         }
-    }
+    }    
 
     async update(enquiryId, updateData) {
-        const connectionPool = pool.promise();
+        const connectionPool =await pool.getConnection();
         try {
             await connectionPool.beginTransaction(); // Begin transaction
 
@@ -40,12 +46,12 @@ class EnquiryDataAccessor {
             }
             throw new Error(err);
         } finally {
-            connectionPool.releaseConnection();
+            await connectionPool.release()
         }
     }
 
     async updateStatus(enquiryId, enquiryStatus) {
-        const connectionPool = pool.promise();
+        const connectionPool =await pool.getConnection();
         try {
             await connectionPool.beginTransaction(); // Begin transaction
 
@@ -59,12 +65,12 @@ class EnquiryDataAccessor {
             }
             throw new Error(err);
         } finally {
-            connectionPool.releaseConnection();
+            await connectionPool.release()
         }
     }
 
     async softDelete(enquiryId) {
-        const connectionPool = pool.promise();
+        const connectionPool =await pool.getConnection();
         try {
             await connectionPool.beginTransaction(); // Begin transaction
 
@@ -79,7 +85,7 @@ class EnquiryDataAccessor {
             }
             throw new Error(err);
         } finally {
-            connectionPool.releaseConnection();
+            await connectionPool.release()
         }
     }
 }

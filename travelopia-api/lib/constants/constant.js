@@ -1,17 +1,14 @@
 const Status = {
+    INACTIVE: '0',
     ACTIVE: '1',
-    INACTIVE: '0'
+    
 };
 
 const EnquiryStatus = {
-    PENDING: 'Pending',
-    IN_PROGRESS: 'In Progress',
-    COMPLETED: 'Completed',
-    ARCHIVE: 'Archive'
+    PENDING: '0',
+    IN_PROGRESS: '1',
+    COMPLETED: '2',
+    ARCHIVE: '3'
 };
 
-const VacationState={
-
-}
-
-module.exports = { Status, EnquiryStatus,VacationState };
+module.exports = { Status, EnquiryStatus };

@@ -2,9 +2,8 @@ const EnquiryService = require('../service/EnquiryService');
 
 class EnquiryRouterHandler {
   async update(req, res, next) {
-    const { enquiryId, updateData } = req.body; // Update with the actual request data
     try {
-      const response = await new EnquiryService().updateEnquiry({ enquiryId, updateData });
+      const response = await new EnquiryService().updateEnquiry({ enquiryId:req.params.id, updateData:req.body });
       res.send(response);
     } catch (err) {
       next(err);
@@ -21,9 +20,8 @@ class EnquiryRouterHandler {
   }
 
   async insert(req, res, next) {
-    const { enquiryData } = req.body; // Update with the actual request data
     try {
-      const response = await new EnquiryService().addEnquiry({ enquiryData });
+      const response = await new EnquiryService().addEnquiry(req.body);
       res.send(response);
     } catch (err) {
       next(err);
