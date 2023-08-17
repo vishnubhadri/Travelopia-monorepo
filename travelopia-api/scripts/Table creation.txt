@@ -1,0 +1,51 @@
+CREATE DATABASE IF NOT EXISTS travelopia;
+
+USE travelopia;
+
+CREATE TABLE country (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    country_name VARCHAR(255) NOT NULL,
+    country_image_url VARCHAR(255),
+    description TEXT,
+    is_active boolean DEFAULT 1
+);
+
+CREATE TABLE state_of_vacation (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    stage_name VARCHAR(255) NOT NULL,
+    is_active boolean
+);
+
+CREATE TABLE enquiry_records (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    country_id INT,
+    message TEXT DEFAULT null,
+    enquiry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    duration_days INT,
+    duration_months INT,
+    stage_id INT,
+    phone_number VARCHAR(20) DEFAULT null,
+    number_of_travelers INT DEFAULT 1,
+    status_of_enquiry ENUM('Pending', 'Inprogress', 'Completed','Archive') DEFAULT 'Pending',
+    FOREIGN KEY (country_id) REFERENCES country(id),
+    FOREIGN KEY (stage_id) REFERENCES state_of_vacation(id)
+);
+
+-- country master 
+INSERT INTO country (country_name, country_image_url, description)
+VALUES
+    ('France', 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34', 'Description of Eiffel Tower in Paris'),
+    ('Italy', 'https://images.unsplash.com/photo-1626220611368-ad0a6bbd04ce', 'Description of Colosseum in Rome'),
+    ('Spain', 'https://images.unsplash.com/photo-1597032868256-1f659aeb0d49', 'Description of Sagrada Familia in Barcelona'),
+    ('United States', 'https://images.unsplash.com/photo-1590092915840-5bd145d6c2df', 'Description of Statue of Liberty in New York'),
+    ('United Kingdom', 'https://plus.unsplash.com/premium_photo-1661962726504-fa8f464a1bb8', 'Description of Big Ben in London'),
+    ('Japan', 'https://images.unsplash.com/photo-1578271887552-5ac3a72752bc', 'Description of Mount Fuji in Japan'),
+    ('China', 'https://images.unsplash.com/photo-1508804052814-cd3ba865a116', 'Description of Great Wall of China'),
+    ('India', 'https://images.unsplash.com/photo-1522788155960-563ae30d1b53', 'Description of Taj Mahal in Agra'),
+    ('Brazil', 'https://images.unsplash.com/photo-1548963670-aaaa8f73a5e3', 'Description of Christ the Redeemer in Rio de Janeiro'),
+    ('Australia', 'https://images.unsplash.com/photo-1616128618694-96e9e896ecb7', 'Description of Sydney Opera House in Australia'),
+    ('Switzerland', 'https://images.unsplash.com/photo-1505765050516-f72dcac9c60e', 'Description of Swiss Alps'),
+    ('Netherlands', 'https://images.unsplash.com/photo-1566904547615-5be8cd937cd8', 'Description of Amsterdam Canals'),
+    ('Canada', 'https://images.unsplash.com/photo-1489447068241-b3490214e879', 'Description of Niagara Falls');
