@@ -14,4 +14,4 @@ const VacationState={
 
 }
 
-module.exports = { Status, CountryStatus,VacationState };
+module.exports = { Status, EnquiryStatus,VacationState };

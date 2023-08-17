@@ -1,30 +1,30 @@
-const { connection } = require('../database/mysql');
+const { pool } = require('../database/mysql');
 const StateOfVacationCacheAccessor = require('../cache-accessor/StateOfVacationCacheAccessor');
 
 class StateOfVacationDataAccessor {
   async fetch() {
-    const pool = connection.getConnection();
+    const connectionPool = pool.promise();
     try {
       if (StateOfVacationCacheAccessor.findCache('fetch_all_states')) {
         return StateOfVacationCacheAccessor.get('fetch_all_states');
       } else {
-        const [rows] = await pool.query('SELECT * FROM state_of_vacation');
+        const [rows] = await connectionPool.query('SELECT * FROM state_of_vacation');
         StateOfVacationCacheAccessor.set('fetch_all_states', rows);
         return rows;
       }
     } catch (err) {
       throw new Error(err);
     } finally {
-      pool.release();
+      connectionPool.releaseConnection();
     }
   }
 
   async insert(stateData) {
-    const pool = connection.getConnection();
+    const connectionPool = pool.promise();
     try {
-      await pool.beginTransaction(); // Begin transaction
-      const [result] = await pool.query('INSERT INTO state_of_vacation SET ?', stateData);
-      await pool.commit(); // Commit transaction
+      await connectionPool.beginTransaction(); // Begin transaction
+      const [result] = await connectionPool.query('INSERT INTO state_of_vacation SET ?', stateData);
+      await connectionPool.commit(); // Commit transaction
 
       // Update or add to cache after insert
       const cachedStates = StateOfVacationCacheAccessor.get('fetch_all_states');
@@ -35,20 +35,20 @@ class StateOfVacationDataAccessor {
       return result;
     } catch (err) {
       if (pool) {
-        await pool.rollback(); // Rollback transaction in case of failure
+        await connectionPool.rollback(); // Rollback transaction in case of failure
       }
       throw new Error(err);
     } finally {
-      pool.release();
+      connectionPool.releaseConnection();
     }
   }
 
   async update(stateId, updateData) {
-    const pool = connection.getConnection();
+    const connectionPool = pool.promise();
     try {
-      await pool.beginTransaction(); // Begin transaction
-      const [result] = await pool.query('UPDATE state_of_vacation SET ? WHERE id = ?', [updateData, stateId]);
-      await pool.commit(); // Commit transaction
+      await connectionPool.beginTransaction(); // Begin transaction
+      const [result] = await connectionPool.query('UPDATE state_of_vacation SET ? WHERE id = ?', [updateData, stateId]);
+      await connectionPool.commit(); // Commit transaction
 
       // Update cache after update
       const cachedStates = StateOfVacationCacheAccessor.get('fetch_all_states');
@@ -62,20 +62,20 @@ class StateOfVacationDataAccessor {
       return result;
     } catch (err) {
       if (pool) {
-        await pool.rollback(); // Rollback transaction in case of failure
+        await connectionPool.rollback(); // Rollback transaction in case of failure
       }
       throw new Error(err);
     } finally {
-      pool.release();
+      connectionPool.releaseConnection();
     }
   }
 
   async softDelete(stateId) {
-    const pool = connection.getConnection();
+    const connectionPool = pool.promise();
     try {
-      await pool.beginTransaction(); // Begin transaction
-      const [result] = await pool.query('DELETE FROM state_of_vacation WHERE id = ?', [stateId]);
-      await pool.commit(); // Commit transaction
+      await connectionPool.beginTransaction(); // Begin transaction
+      const [result] = await connectionPool.query('DELETE FROM state_of_vacation WHERE id = ?', [stateId]);
+      await connectionPool.commit(); // Commit transaction
 
       // Remove from cache after delete
       const cachedStates = StateOfVacationCacheAccessor.get('fetch_all_states');
@@ -89,11 +89,11 @@ class StateOfVacationDataAccessor {
       return result;
     } catch (err) {
       if (pool) {
-        await pool.rollback(); // Rollback transaction in case of failure
+        await connectionPool.rollback(); // Rollback transaction in case of failure
       }
       throw new Error(err);
     } finally {
-      pool.release();
+      connectionPool.releaseConnection();
     }
   }
 }

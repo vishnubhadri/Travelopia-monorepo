@@ -1,85 +1,85 @@
-const { connection } = require('../database/mysql'); // Import your database configuration
+const { pool } = require('../database/mysql'); // Import your database configuration
 
 class EnquiryDataAccessor {
     async fetch() {
-        const pool = connection.getConnection();
+        const connectionPool = pool.promise();
         try {
-            const [rows] = await pool.query('SELECT * FROM enquiry_records');
+            const [rows] = await connectionPool.query('SELECT * FROM enquiry_records');
             return rows;
         } catch (err) {
             throw new Error(err);
         } finally {
-            pool.release();
+            connectionPool.releaseConnection();
         }
     }
 
     async insert(enquiryData) {
-        const pool = connection.getConnection();
+        const connectionPool = connectionPool.promise();
         try {
-            const [result] = await pool.query('INSERT INTO enquiry_records SET ?', enquiryData);
+            const [result] = await connectionPool.query('INSERT INTO enquiry_records SET ?', enquiryData);
             return result;
         } catch (err) {
             throw new Error(err);
         } finally {
-            pool.release();
+            connectionPool.releaseConnection();
         }
     }
 
     async update(enquiryId, updateData) {
-        const pool = connection.getConnection();
+        const connectionPool = pool.promise();
         try {
-            await pool.beginTransaction(); // Begin transaction
+            await connectionPool.beginTransaction(); // Begin transaction
 
-            const [result] = await pool.query('UPDATE enquiry_records SET ? WHERE id = ?', [updateData, enquiryId]);
-            await pool.commit(); // Commit transaction
+            const [result] = await connectionPool.query('UPDATE enquiry_records SET ? WHERE id = ?', [updateData, enquiryId]);
+            await connectionPool.commit(); // Commit transaction
 
             return result;
         } catch (err) {
-            if (pool) {
-                await pool.rollback(); // Rollback transaction in case of failure
+            if (connectionPool) {
+                await connectionPool.rollback(); // Rollback transaction in case of failure
             }
             throw new Error(err);
         } finally {
-            pool.release();
+            connectionPool.releaseConnection();
         }
     }
 
     async updateStatus(enquiryId, enquiryStatus) {
-        const pool = connection.getConnection();
+        const connectionPool = pool.promise();
         try {
-            await pool.beginTransaction(); // Begin transaction
+            await connectionPool.beginTransaction(); // Begin transaction
 
-            const [result] = await pool.query('UPDATE enquiry_records SET status_of_enquiry = ? WHERE id = ?', [enquiryStatus, enquiryId]);
-            await pool.commit(); // Commit transaction
+            const [result] = await connectionPool.query('UPDATE enquiry_records SET status_of_enquiry = ? WHERE id = ?', [enquiryStatus, enquiryId]);
+            await connectionPool.commit(); // Commit transaction
 
             return result;
         } catch (err) {
-            if (pool) {
-                await pool.rollback(); // Rollback transaction in case of failure
+            if (connectionPool) {
+                await connectionPool.rollback(); // Rollback transaction in case of failure
             }
             throw new Error(err);
         } finally {
-            pool.release();
+            connectionPool.releaseConnection();
         }
     }
 
     async softDelete(enquiryId) {
-        const pool = connection.getConnection();
+        const connectionPool = pool.promise();
         try {
-            await pool.beginTransaction(); // Begin transaction
+            await connectionPool.beginTransaction(); // Begin transaction
 
-            const [result] = await pool.query('UPDATE enquiry_records SET status_of_enquiry = ? WHERE id = ?', ['Archive', enquiryId]);
+            const [result] = await connectionPool.query('UPDATE enquiry_records SET status_of_enquiry = ? WHERE id = ?', ['Archive', enquiryId]);
 
-            await pool.commit(); // Commit transaction
+            await connectionPool.commit(); // Commit transaction
 
             return result;
         } catch (err) {
-            if (pool) {
-                await pool.rollback(); // Rollback transaction in case of failure
+            if (connectionPool) {
+                await connectionPool.rollback(); // Rollback transaction in case of failure
             }
             throw new Error(err);
         } finally {
-            pool.release();
+            connectionPool.releaseConnection();
         }
     }
 }

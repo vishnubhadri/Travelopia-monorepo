@@ -1,18 +1,21 @@
-const mysql = require('mysql2/promise');
- 
-const connection  = mysql.createPool({
-    connectionLimit : 10, //important
-    host     : 'localhost',
-    user     : 'root',
-    password : 'root',
-    database : 'travelopia',
-    debug    :  false
+const mysql = require('mysql2');
+
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database:'travelopia',
+    waitForConnections: true,
+    connectionLimit: 10,
+    maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
+    idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0
 });
 
 
-connection.getConnection((err,connection)=> {
-    if(err)
-    throw err;
-    console.log('Database connected successfully');  })
+const connection = pool.promise();
 
-module.exports= { connection };
+
+module.exports = { connection,pool };

@@ -6,8 +6,8 @@ class EnquiryRouterHandler {
     try {
       const response = await new EnquiryService().updateEnquiry({ enquiryId, updateData });
       res.send(response);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   }
 
@@ -15,8 +15,8 @@ class EnquiryRouterHandler {
     try {
       const response = await new EnquiryService().fetchEnquiries();
       res.send(response);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   }
 
@@ -25,8 +25,8 @@ class EnquiryRouterHandler {
     try {
       const response = await new EnquiryService().addEnquiry({ enquiryData });
       res.send(response);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   }
 
@@ -35,8 +35,8 @@ class EnquiryRouterHandler {
     try {
       const response = await new EnquiryService().updateEnquiryStatus({ enquiryId, newStatus });
       res.send(response);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   }
 }

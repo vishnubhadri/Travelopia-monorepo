@@ -18,7 +18,7 @@ class CountryRouterHandler {
       const response = await new CountryService().fetchCountries(req);
       res.send(response);
     }
-    catch (error) {
+    catch (err) {
       next(err);
     }
   }
