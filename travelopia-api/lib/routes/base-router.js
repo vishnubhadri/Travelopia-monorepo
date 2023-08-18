@@ -11,6 +11,7 @@ const { validatestateOfVacationRequest } = require("../schema/stateOfVacationSch
 
 // GET all countries
 router.get("/countries", countryRouterHandler.fetch);
+router.get("/_countries", countryRouterHandler.fetchAll);
 // POST a new country
 router.post("/_countries", validateCountryRequest, countryRouterHandler.insert);
 // PUT update for a country
@@ -34,6 +35,10 @@ router.get(
   "/vacation-status",
   stateOfVacationRouterHandler.fetch.bind(stateOfVacationRouterHandler)
 );
+router.get(
+  "/_vacation-status",
+  stateOfVacationRouterHandler.fetchAll.bind(stateOfVacationRouterHandler)
+);
 router.post(
   "/_vacation-status",
   validatestateOfVacationRequest,
@@ -46,7 +51,6 @@ router.put(
 );
 router.delete(
   "/_vacation-status/:id",
-  validatestateOfVacationRequest,
   stateOfVacationRouterHandler.delete.bind(stateOfVacationRouterHandler)
 );
 

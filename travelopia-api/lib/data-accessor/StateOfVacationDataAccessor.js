@@ -8,10 +8,23 @@ class StateOfVacationDataAccessor {
       if (StateOfVacationCacheAccessor.findCache('fetch_all_states')) {
         return StateOfVacationCacheAccessor.get('fetch_all_states');
       } else {
-        const [rows] = await connectionPool.query('SELECT * FROM state_of_vacation');
+        const [rows] = await connectionPool.query('SELECT * FROM state_of_vacation WHERE is_active=1');
         StateOfVacationCacheAccessor.set('fetch_all_states', rows);
         return rows;
       }
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      await connectionPool.release()
+    }
+  }
+
+  async fetchAll() {
+    const connectionPool = await pool.getConnection();
+    try {
+        const [rows] = await connectionPool.query('SELECT * FROM state_of_vacation');
+        StateOfVacationCacheAccessor.set('fetch_all_states', rows);
+        return rows;
     } catch (err) {
       throw new Error(err);
     } finally {

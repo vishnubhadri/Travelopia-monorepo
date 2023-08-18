@@ -1,6 +1,15 @@
 const StateOfVacationService = require('../service/StateOfVacationService');
 
 class StateOfVacationRouterHandler {
+  async fetchAll(req, res, next) {
+    try {
+      const states = await new StateOfVacationService().fetchAllStates();
+      res.send(states);
+    }
+    catch (err) {
+      next(err);
+    }
+  }
   async fetch(req, res, next) {
     try {
       const states = await new StateOfVacationService().fetchStates();
