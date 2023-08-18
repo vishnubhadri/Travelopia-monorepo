@@ -35,6 +35,7 @@
         </template>
       </v-table>
     </v-card-item>
+    <v-divider></v-divider>
     <v-card-item>
       <!-- Form for adding new state -->
       <v-form @submit.prevent="addStatus">

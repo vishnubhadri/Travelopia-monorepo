@@ -3,7 +3,7 @@
     <v-card-title>Country Table</v-card-title>
     <v-card-item>
       <!-- Table to display existing countries -->
-      <v-table>
+      <v-table height="calc(100vh - 136px)">
         <template v-slot:default>
           <thead>
             <tr>
@@ -38,6 +38,7 @@
         </template>
       </v-table>
     </v-card-item>
+    <v-divider></v-divider>
     <v-card-item>
       <!-- Form for adding new country -->
       <v-form @submit.prevent="addCountry">

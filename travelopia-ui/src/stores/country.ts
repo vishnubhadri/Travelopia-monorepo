@@ -3,21 +3,24 @@ import { defineStore, type Pinia } from 'pinia'
 import axios, { type AxiosResponse } from 'axios'
 import type { Country } from '@/interfaces/Country'
 import { COUNTRY, BACKGROUND_STYLE_KEY, OPS_COUNTRY } from '@/config'
+import type { Enquiries } from '@/interfaces'
 
 export const useCountryStore = defineStore('country', () => {
   let country = ref([]) as Country[]
   let allCountry = ref([]) as Country[]
+
   let selectedValues = ref({
+    full_name: '',
+    email: '',
     country_id: null,
-    number_of_travelers: 1,
-    duration_from: new Date(),
+    message: '',
+    duration_from: null,
     duration_to: null,
-    full_name: null,
-    email: null,
-    phone_number: null,
     stage_id: null,
-    message: null
-  })
+    phone_number: null,
+    number_of_travelers: 1
+  }) as Enquiries
+
   let homeScreenBG = document.documentElement.style
   async function getCountryList(): Promise<Array<Country>> {
     const vm: any = this
@@ -115,6 +118,7 @@ export const useCountryStore = defineStore('country', () => {
     getCountryAllList,
     deleteCountry,
     updateCountry,
-    addNewCountry
+    addNewCountry,
+    allCountry
   }
 })

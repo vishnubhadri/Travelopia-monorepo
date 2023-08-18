@@ -63,13 +63,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useVacationStatusStore, useCountryStore } from '@/stores'
-
-const fullName = ref('')
-const email = ref('')
-const phoneNumber = ref('')
-const showMessage = ref(false)
-const message = ref('')
+import { useVacationStatusStore, useCountryStore,useEnquiryStore } from '@/stores'
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
 
@@ -96,7 +90,19 @@ const resetForm = () => {
 }
 
 const emit = defineEmits(['back'])
-function submit() {}
+function submit() {
+  useEnquiryStore().postEnquiry({
+    full_name: selectedValues.value.full_name,
+    email: selectedValues.value.email,
+    country_id: selectedValues.value.country_id,
+    message: selectedValues.value.message,
+    duration_from: selectedValues.value.duration_from,
+    duration_to: selectedValues.value.duration_to,
+    stage_id: selectedValues.value.stage_id,
+    phone_number: selectedValues.value.phone_number,
+    number_of_travelers: selectedValues.value.number_of_travelers
+  })
+}
 </script>
 
 <style scoped>

@@ -6,7 +6,7 @@
       <v-tab value="Vacation Status">Vacation Status</v-tab>
     </v-tabs>
 
-    <v-card-text>
+    <v-card-text class="scroll">
       <v-window v-model="tab">
         <v-window-item value="Enquiry"> <enquiry /> </v-window-item>
 
@@ -42,5 +42,9 @@ onMounted(() => {
   max-height: 100vh;
   min-width: 100vw;
   max-width: 100vw;
+}
+.scroll{
+  overflow: auto;
+  max-height: calc(100vh - 48px);
 }
 </style>
