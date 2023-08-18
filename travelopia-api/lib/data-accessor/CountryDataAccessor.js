@@ -24,7 +24,7 @@ class CountryDataAccessor {
         const connectionPool = await pool.getConnection();
         try {
 
-            const [rows] = await connectionPool.query(`SELECT id,country_name,country_image_url,description  FROM country`);
+            const [rows] = await connectionPool.query(`SELECT id,country_name,country_image_url,description,is_active  FROM country`);
             CountryCacheAccessor.set('fetch_all_country', rows);
             return rows;
 

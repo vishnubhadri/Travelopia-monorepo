@@ -5,10 +5,10 @@ const Status = {
 };
 
 const EnquiryStatus = {
-    PENDING: '0',
-    IN_PROGRESS: '1',
-    COMPLETED: '2',
-    ARCHIVE: '3'
+    PENDING: 'Pending',
+    IN_PROGRESS: 'Inprogress',
+    COMPLETED: 'Completed',
+    ARCHIVE: 'Archive'
 };
 
 module.exports = { Status, EnquiryStatus };

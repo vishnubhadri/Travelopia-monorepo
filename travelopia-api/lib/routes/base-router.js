@@ -26,8 +26,7 @@ router.delete("/_countries/:id", countryRouterHandler.delete);
 router.post("/enquiry", validateEnquiryRequest, enquiryRouterHandler.insert);
 // GET all enquiries
 router.get("/_enquiry", enquiryRouterHandler.fetch);
-// PUT update for an enquiry
-router.put("/_enquiry/:id", validateEnquiryRequest, enquiryRouterHandler.update);
+router.get("/_enquiry/stage-flow", enquiryRouterHandler.stageFlow);
 // PUT update status for an enquiry
 router.put("/_enquiry/:id/status", enquiryRouterHandler.updateStatus);
 

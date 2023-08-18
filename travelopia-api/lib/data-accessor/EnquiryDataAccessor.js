@@ -71,6 +71,7 @@ class EnquiryDataAccessor {
 
     async softDelete(enquiryId) {
         const connectionPool =await pool.getConnection();
+        debugger
         try {
             await connectionPool.beginTransaction(); // Begin transaction
 

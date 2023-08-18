@@ -9,6 +9,14 @@ class EnquiryRouterHandler {
       next(err);
     }
   }
+  async stageFlow(req, res, next) {
+    try {
+      const response = await new EnquiryService().getEnquiryStageFlow();
+      res.send(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 
   async fetch(req, res, next) {
     try {
@@ -29,9 +37,9 @@ class EnquiryRouterHandler {
   }
 
   async updateStatus(req, res, next) {
-    const { enquiryId, newStatus } = req.body; // Update with the actual request data
+    const { stage } = req.body; // Update with the actual request data
     try {
-      const response = await new EnquiryService().updateEnquiryStatus({ enquiryId, newStatus });
+      const response = await new EnquiryService().updateEnquiryStatus(req.params.id, stage );
       res.send(response);
     } catch (err) {
       next(err);
