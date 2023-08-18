@@ -2,6 +2,12 @@ export const BASE_URL: string = 'http://sankar-pc:3000/'
 
 //API endpoint
 export const COUNTRY: string = `${BASE_URL}countries`
+export const ENQUIRY: string = `${BASE_URL}enquiry`
+export const VACATION: string = `${BASE_URL}vacation-status`
+
+export const OPS_ENQUIRY: string = `${BASE_URL}_enquiry`
+export const OPS_COUNTRY: string = `${BASE_URL}_countries`
+export const OPS_VACATION: string = `${BASE_URL}_vacation-status`
 
 //COMMON CONFIG
 export const DEFAULT_BACKGROUND: string =

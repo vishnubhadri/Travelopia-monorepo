@@ -1,22 +1,24 @@
 <template>
-  <v-card width="fit-content" class="card">
-    <v-card-text>
-      <v-row align="center" no-gutters>
-        <v-slide-x-transition>
-          <v-col>
-            <v-expand-transition>
-              <template v-if="search">
-                <Search @next="showEnquiry" />
-              </template>
-              <template v-else>
-                <Enquiry @back="hideEnquiry" />
-              </template>
-            </v-expand-transition>
-          </v-col>
-        </v-slide-x-transition>
-      </v-row>
-    </v-card-text>
-  </v-card>
+  <v-container>
+    <v-card width="fit-content" class="card">
+      <v-card-text>
+        <v-row align="center" no-gutters>
+          <v-slide-x-transition>
+            <v-col>
+              <v-expand-transition>
+                <template v-if="search">
+                  <Search @next="showEnquiry" />
+                </template>
+                <template v-else>
+                  <Enquiry @back="hideEnquiry" />
+                </template>
+              </v-expand-transition>
+            </v-col>
+          </v-slide-x-transition>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <script setup lang="ts">

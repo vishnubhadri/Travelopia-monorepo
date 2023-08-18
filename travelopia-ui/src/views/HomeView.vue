@@ -7,9 +7,10 @@
 <script setup lang="ts">
 import HomeBackground from '@/components/HomeComponents/HomeBackground.vue'
 import { onMounted } from 'vue'
-import { useCountryStore } from '@/stores'
+import { useCountryStore, useVacationStatusStore } from '@/stores'
 
 onMounted(() => {
   useCountryStore().getCountryList()
+  useVacationStatusStore().getVacationList()
 })
 </script>

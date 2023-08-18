@@ -2,7 +2,7 @@
   <v-sheet width="370">
     <v-form @submit.prevent="validateForm">
       <v-text-field
-        v-model="fullName"
+        v-model="selectedValues['full_name']"
         :rules="[(v) => !!v || 'Full Name is required']"
         label="Full Name"
         color="primary"
@@ -10,7 +10,7 @@
       ></v-text-field>
 
       <v-text-field
-        v-model="email"
+        v-model="selectedValues['email']"
         :rules="[
           (v) => !!v || 'Email is required',
           (v) => emailRegex.test(v) || 'Email must be valid'
@@ -21,12 +21,23 @@
       ></v-text-field>
 
       <v-text-field
-        v-model="phoneNumber"
+        v-model="selectedValues['phone_number']"
         :rules="[(v) => !!v || 'Phone Number is required']"
         label="Phone Number"
         color="primary"
         required
       ></v-text-field>
+
+      <v-select
+        :items="vacationStatus"
+        :rules="[(v) => !!v || 'Trip Status is required']"
+        label="Trip Status"
+        color="primary"
+        required
+        item-title="stage_name"
+        item-value="id"
+        v-model="selectedValues['stage_id']"
+      ></v-select>
 
       <v-switch
         v-model="showMessage"
@@ -36,7 +47,7 @@
       <v-expand-transition>
         <v-textarea
           v-if="showMessage"
-          v-model="message"
+          v-model="selectedValues['message']"
           label="Message"
           auto-grow
           :rules="[(v) => !!v || 'Message is required']"
@@ -51,7 +62,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useVacationStatusStore, useCountryStore } from '@/stores'
 
 const fullName = ref('')
 const email = ref('')
@@ -61,13 +73,21 @@ const message = ref('')
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
 
+const vacationStatus = computed(() => {
+  return useVacationStatusStore().vacations
+})
+const selectedValues = computed(() => {
+  return useCountryStore().selectedValues
+})
+
 const validateForm = () => {
   return (
-    !!fullName.value &&
-    !!email.value &&
-    emailRegex.test(email.value) &&
-    !!phoneNumber.value &&
-    (!showMessage || !!message.value)
+    !!selectedValues['full_name'] &&
+    !!selectedValues['email'] &&
+    emailRegex.test(selectedValues['email']) &&
+    !!selectedValues['phone_number'] &&
+    selectedValues['stage_id']>-1 &&
+    (!showMessage || !!selectedValues['message'])
   )
 }
 

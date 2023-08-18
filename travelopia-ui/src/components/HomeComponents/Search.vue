@@ -9,7 +9,7 @@
         required
         item-title="country_name"
         item-value="id"
-        v-model="selectedValues['country']"
+        v-model="selectedValues['country_id']"
       ></v-autocomplete>
       <v-row class="mb-2">
         <v-col cols="6">
@@ -17,12 +17,13 @@
             <label class="mdc-floating-label">Check-in Date</label>
             <input
               type="date"
-              v-model="checkInDate"
-              :disabledDates="disabledCheckInDates"
-              :minDate="checkInDate"
+              v-model="selectedValues['duration_from']"
               class="mdc-text-field__input"
               required
             />
+            <span v-if="checkInError" class="error-label"
+              >Check-in Date is required and must be valid</span
+            >
           </div>
         </v-col>
         <v-col cols="6">
@@ -30,9 +31,7 @@
             <label class="mdc-floating-label">Check-out Date</label>
             <input
               type="date"
-              v-model="checkOutDate"
-              :disabledDates="disabledCheckOutDates"
-              :minDate="checkInDate"
+              v-model="selectedValues['duration_to']"
               class="mdc-text-field__input"
               required
             />
@@ -44,9 +43,12 @@
       </v-row>
 
       <v-text-field
-        v-model.number="travelers"
+        v-model.number="selectedValues['number_of_travelers']"
         :rules="[
-          (v) => (!!travelers && travelers > 0) || 'Number of travelers must be greater than 0'
+          (v) =>
+            (!!selectedValues['number_of_travelers'] &&
+              selectedValues['number_of_travelers'] > 0) ||
+            'Number of travelers must be greater than 0'
         ]"
         type="number"
         variant="outlined"
@@ -72,29 +74,53 @@ const selectedValues = computed(() => {
   return useCountryStore().selectedValues
 })
 
-const checkInDate = ref('')
-const checkOutDate = ref('')
-const travelers = ref(1)
 const checkOutError = ref(false)
-
-const disabledCheckInDates = (date) => date <= new Date()
-const disabledCheckOutDates = (date) => date <= checkInDate.value
-
-const validateForm = () => {
-  checkOutError.value = !checkOutDate.value
-  return checkOutDate.value !== ''
-}
+const checkInError = ref(false)
 
 const resetForm = () => {
+  selectedValues.value['duration_from'] = ''
+  selectedValues.value['duration_to'] = ''
+  selectedValues.value['number_of_travelers'] = 1
+  checkInError.value = false
   checkOutError.value = false
-  checkInDate.value = ''
-  checkOutDate.value = ''
-  travelers.value = 1
+}
+
+function validateForm() {
+  const selectedCountryId = selectedValues.value['country_id']
+  const numberOfTravelers = selectedValues.value['number_of_travelers']
+  const durationFrom = new Date(selectedValues.value['duration_from'])
+  const durationTo = new Date(selectedValues.value['duration_to'])
+  const today = new Date()
+  checkOutError.value=false;
+  checkInError.value=false;
+  const errors = []
+  
+  if (!selectedCountryId) {
+    errors.push('Location is required')
+  }
+
+  if (!numberOfTravelers || numberOfTravelers <= 0) {
+    errors.push('Number of travelers must be greater than 0')
+  }
+
+  if ('Invalid Date' === durationFrom.toString() || durationFrom < today) {
+    errors.push('Check-in Date must be today or in the future')
+    checkInError.value = true
+  }
+
+  if ('Invalid Date' === durationTo.toString() || durationTo < durationFrom) {
+    errors.push('Check-out Date must be after Check-in Date')
+    checkOutError.value = true
+  }
+
+  return errors.length === 0
 }
 
 const emit = defineEmits(['next'])
 function submit() {
-  emit('next', true)
+  if (validateForm()) {
+    emit('next', true)
+  }
 }
 </script>
 

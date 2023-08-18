@@ -6,7 +6,17 @@ import { COUNTRY, BACKGROUND_STYLE_KEY } from '@/config'
 
 export const useCountryStore = defineStore('country', () => {
   let country = ref([]) as Country[]
-  let selectedValues = ref({ country: null })
+  let selectedValues = ref({
+    country_id: null,
+    number_of_travelers: 1,
+    duration_from: new Date(),
+    duration_to: null,
+    full_name: null,
+    email: null,
+    phone_number: null,
+    stage_id: null,
+    message: null
+  })
   let homeScreenBG = document.documentElement.style
   async function getCountryList(): Promise<Array<Country>> {
     const vm: any = this
