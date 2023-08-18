@@ -11,6 +11,7 @@
               <th>Country Name</th>
               <th>Country Image URL</th>
               <th>Description</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -20,23 +21,43 @@
               <td>{{ country.countryName }}</td>
               <td>{{ country.countryImageUrl }}</td>
               <td>{{ country.description }}</td>
+              <td>{{ country.is_active == 1 ? 'Active' : 'Deactive' }}</td>
               <td>
-                <v-icon @click="editCountry(country)">mdi-pencil</v-icon>
-                <v-icon @click="deleteCountry(country.id)">mdi-delete</v-icon>
+                <v-menu>
+                  <template v-slot:activator="{ props }">
+                    <v-icon color="primary" v-bind="props" icon="mdi-dots-vertical"> </v-icon>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="editCountry(country)">Edit</v-list-item>
+                    <v-list-item @click="deleteCountry(country.id)">Delete</v-list-item>
+                  </v-list>
+                </v-menu>
               </td>
             </tr>
           </tbody>
         </template>
       </v-table>
     </v-card-item>
-    <v-card-item
-      ><!-- Form for adding new country -->
+    <v-card-item>
+      <!-- Form for adding new country -->
       <v-form @submit.prevent="addCountry">
         <v-text-field v-model="newCountry.countryName" label="Country Name" required></v-text-field>
+        <v-expand-x-transition>
+          <v-img
+            v-if="newCountry.countryImageUrl"
+            :src="newCountry.countryImageUrl"
+            aspect-ratio="0"
+            width="350px"
+          ></v-img>
+        </v-expand-x-transition>
         <v-text-field v-model="newCountry.countryImageUrl" label="Country Image URL"></v-text-field>
+
+        <v-switch v-model="newCountry.is_active" label="Is Active" color="primary"></v-switch>
         <v-textarea v-model="newCountry.description" label="Description"></v-textarea>
 
-        <v-btn color="primary" type="submit">Add Country</v-btn>
+        <v-btn color="primary" :loading="isLoading" type="submit" @click.prevent="addCountry">
+          {{ buttonAction }} Country
+        </v-btn>
       </v-form>
     </v-card-item>
   </v-sheet>
@@ -44,14 +65,20 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useCountryStore } from '@/stores'
+import type { Country } from '@/interfaces'
 
 const newCountry = ref({
   countryName: '',
   countryImageUrl: '',
-  description: ''
+  description: '',
+  is_active: true,
+  id: -1
 })
 
 const countries = ref([])
+const isLoading = ref(false)
+const buttonAction = ref('Add')
 
 // Fetch existing countries from API on component mount
 onMounted(() => {
@@ -61,43 +88,69 @@ onMounted(() => {
 // Fetch existing countries from API
 const fetchCountries = async () => {
   try {
-    // Call API to fetch countries and update 'countries' ref
-    // Example: countries.value = await fetchCountriesFromAPI();
+    countries.value = await useCountryStore().getCountryAllList() as Country[]
   } catch (error) {
     console.error('Error fetching countries:', error)
   }
 }
 
 // Add new country
-const addCountry = async () => {
-  try {
-    // Call API to add new country using 'newCountry' ref data
-    // Example: await addCountryToAPI(newCountry.value);
-    // Reset newCountry data
-    newCountry.value = {
-      countryName: '',
-      countryImageUrl: '',
-      description: ''
-    }
-    // Fetch updated countries
-    fetchCountries()
-  } catch (error) {
-    console.error('Error adding country:', error)
+const addCountry = () => {
+  if (!(newCountry.value.countryImageUrl || newCountry.value.countryName)) {
+    return
   }
+  isLoading.value = true
+
+  let promise
+  const payload: Country = {
+    country_image_url: newCountry.value.countryImageUrl,
+    country_name: newCountry.value.countryName,
+    description: newCountry.value.description,
+    is_active: newCountry.value.is_active
+  }
+  if (buttonAction.value === 'Edit' && newCountry.value.id !== -1) {
+    promise = useCountryStore().updateCountry(newCountry.value.id, payload)
+  } else {
+    promise = useCountryStore().addNewCountry(payload)
+  }
+
+  promise
+    .then(() => {
+      newCountry.value = {
+        countryName: '',
+        countryImageUrl: '',
+        description: '',
+        is_active: true,
+        id: -1
+      }
+      fetchCountries()
+    })
+    .catch((error) => {
+      console.error('Error adding/updating country:', error)
+    })
+    .finally(() => {
+      isLoading.value = false
+    })
 }
 
 // Edit existing country
-const editCountry = (country) => {
-  // Implement edit logic here
+const editCountry = (country: Country) => {
+  newCountry.value.countryImageUrl = country.country_image_url
+  newCountry.value.countryName = country.country_name
+  newCountry.value.description = country.description
+  newCountry.value.is_active = !!country.is_active
+  if (country.id) {
+    newCountry.value.id = country.id
+  }
 }
 
 // Delete existing country
-const deleteCountry = async (countryId) => {
+const deleteCountry = async (countryId: number) => {
   try {
-    // Call API to delete country by ID
-    // Example: await deleteCountryFromAPI(countryId);
-    // Fetch updated countries
+    isLoading.value = true
+    await useCountryStore().deleteCountry(countryId)
     fetchCountries()
+    isLoading.value = false
   } catch (error) {
     console.error('Error deleting country:', error)
   }

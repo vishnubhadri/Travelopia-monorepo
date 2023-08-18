@@ -103,7 +103,7 @@ function validateForm() {
     errors.push('Number of travelers must be greater than 0')
   }
 
-  if ('Invalid Date' === durationFrom.toString() || durationFrom < today) {
+  if ('Invalid Date' === durationFrom.toString() || durationFrom <= today) {
     errors.push('Check-in Date must be today or in the future')
     checkInError.value = true
   }

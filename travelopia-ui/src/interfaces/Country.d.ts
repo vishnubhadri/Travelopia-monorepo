@@ -1,5 +1,5 @@
 interface Country {
-  id: number
+  id?: number
   country_name: string
   country_image_url: string
   description: string
