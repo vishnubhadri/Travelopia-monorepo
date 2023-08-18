@@ -3,12 +3,12 @@ const CountryCacheAccessor = require('../cache-accessor/CountryCacheAccessor'); 
 
 class CountryDataAccessor {
     async fetch() {
-        const connectionPool =await pool.getConnection();
+        const connectionPool = await pool.getConnection();
         try {
             if (CountryCacheAccessor.findCache('fetch_all_country')) {
                 return CountryCacheAccessor.get('fetch_all_country');
             } else {
-                const [rows] = await  connectionPool.query(`SELECT id,country_name,country_image_url,description,is_active FROM country WHERE is_active = 1`);
+                const [rows] = await connectionPool.query(`SELECT id,country_name,country_image_url,description  FROM country WHERE is_active = 1`);
                 CountryCacheAccessor.set('fetch_all_country', rows);
                 return rows;
             }
@@ -20,8 +20,24 @@ class CountryDataAccessor {
         }
     }
 
+    async fetchAll() {
+        const connectionPool = await pool.getConnection();
+        try {
+
+            const [rows] = await connectionPool.query(`SELECT id,country_name,country_image_url,description,is_active  FROM country`);
+            CountryCacheAccessor.set('fetch_all_country', rows);
+            return rows;
+
+        } catch (err) {
+            throw new Error(err);
+        }
+        finally {
+            await connectionPool.release()
+        }
+    }
+
     async insert(countryData) {
-        const connectionPool =await pool.getConnection();
+        const connectionPool = await pool.getConnection();
         try {
             await connectionPool.beginTransaction();
             const [result] = await connectionPool.query('INSERT INTO country SET ?', countryData);
@@ -45,7 +61,7 @@ class CountryDataAccessor {
     }
 
     async update(countryId, updateData) {
-        const connectionPool =await pool.getConnection();
+        const connectionPool = await pool.getConnection();
         try {
             await connectionPool.beginTransaction();
             const [result] = await connectionPool.query('UPDATE country SET ? WHERE id = ?', [updateData, countryId]);
@@ -72,7 +88,7 @@ class CountryDataAccessor {
     }
 
     async softDelete(countryId) {
-        const connectionPool =await pool.getConnection();
+        const connectionPool = await pool.getConnection();
         try {
             await connectionPool.beginTransaction();
             const [result] = await connectionPool.query('UPDATE country SET is_active = 0 WHERE id = ?', [countryId]);
@@ -85,7 +101,7 @@ class CountryDataAccessor {
             let cachedCountries = CountryCacheAccessor.get('fetch_all_country');
             if (cachedCountries) {
                 cachedCountries = cachedCountries.filter(country => country.id != countryId);
-                CountryCacheAccessor.set('fetch_all_country',cachedCountries)
+                CountryCacheAccessor.set('fetch_all_country', cachedCountries)
             }
 
             return result;

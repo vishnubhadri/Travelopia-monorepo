@@ -9,6 +9,10 @@ class StateOfVacationService {
         const states = await this.stateDataAccessor.fetch();
         return states;
     }
+    async fetchAllStates() {
+        const states = await this.stateDataAccessor.fetchAll();
+        return states;
+    }
 
     async insertState(stateData) {
         const result = await this.stateDataAccessor.insert(stateData);

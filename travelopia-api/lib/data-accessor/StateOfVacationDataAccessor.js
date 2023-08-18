@@ -8,10 +8,23 @@ class StateOfVacationDataAccessor {
       if (StateOfVacationCacheAccessor.findCache('fetch_all_states')) {
         return StateOfVacationCacheAccessor.get('fetch_all_states');
       } else {
-        const [rows] = await connectionPool.query('SELECT * FROM state_of_vacation');
+        const [rows] = await connectionPool.query('SELECT * FROM state_of_vacation WHERE is_active=1');
         StateOfVacationCacheAccessor.set('fetch_all_states', rows);
         return rows;
       }
+    } catch (err) {
+      throw new Error(err);
+    } finally {
+      await connectionPool.release()
+    }
+  }
+
+  async fetchAll() {
+    const connectionPool = await pool.getConnection();
+    try {
+      const [rows] = await connectionPool.query('SELECT * FROM state_of_vacation');
+      StateOfVacationCacheAccessor.set('fetch_all_states', rows);
+      return rows;
     } catch (err) {
       throw new Error(err);
     } finally {
@@ -24,7 +37,7 @@ class StateOfVacationDataAccessor {
     try {
       if (StateOfVacationCacheAccessor.findCache('fetch_all_states')) {
         const stateOfVacationCache = StateOfVacationCacheAccessor.get('fetch_all_states');
-        const cachedState = stateOfVacationCache.find(state => state.id === id);
+        const cachedState = stateOfVacationCache.find(state => state.id == id);
         if (cachedState) {
           return cachedState;
         }
@@ -106,7 +119,7 @@ class StateOfVacationDataAccessor {
       await connectionPool.beginTransaction(); // Begin transaction
 
       // Update related enquiry records to null (or another appropriate value) to remove the dependency
-      await connectionPool.query('UPDATE enquiry_records SET stage_id = null, status_of_enquiry = ? WHERE stage_id = ?', [EnquiryStatus.ARCHIVE,stateId]);
+      await connectionPool.query('UPDATE enquiry_records SET stage_id = null, status_of_enquiry = ? WHERE stage_id = ?', [EnquiryStatus.ARCHIVE, stateId]);
 
       // Now you can delete the state_of_vacation record
       const [result] = await connectionPool.query('UPDATE state_of_vacation SET is_active=0 WHERE id = ?', [stateId]);

@@ -9,6 +9,10 @@ class CountryService {
     const countries = await this.CountryDataAccessor.fetch();
     return countries;
   }
+  async fetchAllCountries() {
+    const countries = await this.CountryDataAccessor.fetchAll();
+    return countries;
+  }
 
   async updateCountry(payload) {
     const { countryId, updateData } = payload;

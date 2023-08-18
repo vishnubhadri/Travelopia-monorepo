@@ -22,6 +22,16 @@ class CountryRouterHandler {
       next(err);
     }
   }
+  
+  async fetchAll(req, res, next) {
+    try {
+      const response = await new CountryService().fetchAllCountries(req);
+      res.send(response);
+    }
+    catch (err) {
+      next(err);
+    }
+  }
 
   async delete(req, res, next) {
     try {

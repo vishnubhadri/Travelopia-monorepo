@@ -18,7 +18,7 @@ class EnquiryDataAccessor {
         try {
             const existingStage=await new StateOfVacationDataAccessor().fetchById(enquiryData.stage_id);
     
-            if (!existingStage||!existingStage.length) {
+            if (!existingStage||!Object.keys(existingStage).length) {
                 throw new Error('stage_id not exist');
             }
 
@@ -71,6 +71,7 @@ class EnquiryDataAccessor {
 
     async softDelete(enquiryId) {
         const connectionPool =await pool.getConnection();
+        
         try {
             await connectionPool.beginTransaction(); // Begin transaction
 
