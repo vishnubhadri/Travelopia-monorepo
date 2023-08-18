@@ -1,12 +1,7 @@
 <template>
   <div>
     <RouterView />
-    <v-snackbar
-      :timeout="timeout"
-      v-model="currentMessage"
-      :color="currentMessage?.color"
-      location="top"
-    >
+    <v-snackbar v-model="currentMessage" :color="currentMessage?.color" location="top">
       <span style="text-transform: capitalize" variant="text">{{ currentMessage?.text }}</span>
       <template v-slot:actions>
         <v-btn variant="text" @click="onSnackbarClose"> Close </v-btn>
@@ -42,6 +37,11 @@ watch(useCountryStore().selectedValues, () => {
     bg = countryData?.country_image_url || DEFAULT_BACKGROUND
   }
   useCountryStore().setBackground(bg)
+})
+watch(currentMessage, () => {
+  setTimeout(() => {
+    useSnackbarStore().removeMessage()
+  }, SNACKBAR_HIDE_TIME)
 })
 </script>
 
