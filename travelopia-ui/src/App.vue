@@ -1,13 +1,60 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-
-</script>
-
 <template>
-  <RouterView />
+  <div>
+    <RouterView />
+    <v-snackbar v-model="currentMessage" :color="currentMessage?.color" location="top">
+      <span style="text-transform: capitalize" variant="text">{{ currentMessage?.text }}</span>
+      <template v-slot:actions>
+        <v-btn variant="text" @click="onSnackbarClose"> Close </v-btn>
+      </template>
+    </v-snackbar>
+  </div>
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+import { watch, onMounted, computed, ref } from 'vue'
+import { useCountryStore, useSnackbarStore } from './stores'
+import { DEFAULT_BACKGROUND, SNACKBAR_HIDE_TIME } from './config'
+
+const timeout = ref(SNACKBAR_HIDE_TIME)
+
+onMounted(() => {
+  useCountryStore().setBackground(DEFAULT_BACKGROUND)
+})
+
+const currentMessage = computed(() => useSnackbarStore().messages[0])
+
+const onSnackbarClose = () => {
+  useSnackbarStore().removeMessage()
+}
+
+watch(useCountryStore().selectedValues, () => {
+  let bg = DEFAULT_BACKGROUND
+  if (useCountryStore().selectedValues.country_id) {
+    const countryData = useCountryStore().country.find(
+      (country) => country.id == useCountryStore().selectedValues.country_id
+    )
+    bg = countryData?.country_image_url || DEFAULT_BACKGROUND
+  }
+  useCountryStore().setBackground(bg)
+})
+watch(currentMessage, () => {
+  setTimeout(() => {
+    useSnackbarStore().removeMessage()
+  }, SNACKBAR_HIDE_TIME)
+})
+</script>
+
+<style>
+html {
+  overflow: hidden;
+}
+body {
+  background-image: var(--custom-background-image);
+  background-size: cover;
+  background-color: gray;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;

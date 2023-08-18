@@ -15,9 +15,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@vuepic/vue-datepicker": "^6.0.0",
+    "@types/axios": "^0.14.0",
+    "axios": "^1.4.0",
     "pinia": "^2.1.4",
     "vue": "^3.3.4",
+    "vue-date-pick": "^1.5.1",
+    "vue-datepicker-ui": "^3.1.1",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.4",
     "vuetify": "^3.3.13"
