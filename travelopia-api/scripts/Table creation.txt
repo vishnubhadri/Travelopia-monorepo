@@ -13,7 +13,7 @@ CREATE TABLE country (
 CREATE TABLE state_of_vacation (
     id INT PRIMARY KEY AUTO_INCREMENT,
     stage_name VARCHAR(255) NOT NULL,
-    is_active boolean
+    is_active boolean DEFAULT 1
 );
 
 CREATE TABLE enquiry_records (
@@ -32,6 +32,13 @@ CREATE TABLE enquiry_records (
     FOREIGN KEY (country_id) REFERENCES country(id),
     FOREIGN KEY (stage_id) REFERENCES state_of_vacation(id)
 );
+
+-- state_of_vacation master 
+INSERT INTO state_of_vacation (stage_name)
+VALUES
+    ('Planning'),
+    ('Ready to the road'),
+    ('Suggession');
 
 -- country master 
 INSERT INTO country (country_name, country_image_url, description)
