@@ -43,7 +43,7 @@ onMounted(() => {
   min-width: 100vw;
   max-width: 100vw;
 }
-.scroll{
+.scroll {
   overflow: auto;
   max-height: calc(100vh - 48px);
 }

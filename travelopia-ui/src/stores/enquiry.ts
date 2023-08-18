@@ -41,7 +41,6 @@ export const useEnquiryStore = defineStore('enquiry', () => {
           stage
         })
         .then((response: AxiosResponse) => {
-          payload.status_of_enquiry = stage
           resolve(true)
         })
         .catch((error: Error) => {

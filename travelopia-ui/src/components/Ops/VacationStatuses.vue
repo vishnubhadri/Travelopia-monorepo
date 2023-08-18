@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useVacationStatusStore } from '@/stores'
+import { useVacationStatusStore, useSnackbarStore } from '@/stores'
 
 const newStatus = ref({
   stage_name: '',
@@ -92,11 +92,18 @@ function addStatus() {
         is_active: !!newStatus.value.is_active
       })
       .then(() => {
+        useSnackbarStore().addMessage({
+          color: 'success',
+          text: 'Vacation ' + buttonAction.value
+        })
+      })
+      .then(() => {
         clearNewStatus()
         updateTable()
+        buttonAction.value = 'Add'
       })
       .catch((error) => {
-        console.error(error)
+        useSnackbarStore().addMessage({ text: error.message, color: 'error' })
       })
   } else {
     useVacationStatusStore()
@@ -105,11 +112,17 @@ function addStatus() {
         is_active: !!newStatus.value.is_active
       })
       .then(() => {
+        useSnackbarStore().addMessage({
+          color: 'success',
+          text: 'Vacation ' + buttonAction.value
+        })
+      })
+      .then(() => {
         clearNewStatus()
         updateTable()
       })
       .catch((error) => {
-        console.error(error)
+        useSnackbarStore().addMessage({ text: error.message, color: 'error' })
       })
   }
 }
@@ -126,10 +139,16 @@ function deleteStatus(status: number) {
   useVacationStatusStore()
     .deleteStatus(status)
     .then(() => {
+      useSnackbarStore().addMessage({
+        color: 'success',
+        text: 'Vacation Status deleted'
+      })
+    })
+    .then(() => {
       updateTable()
     })
     .catch((error) => {
-      console.error(error)
+      useSnackbarStore().addMessage({ text: error.message, color: 'error' })
     })
 }
 

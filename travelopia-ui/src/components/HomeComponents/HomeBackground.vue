@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card width="fit-content" class="card">
+    <v-card width="fit-content" class="card overflow-x-auto" max-height="calc(100vh - 100px)">
       <v-card-text>
         <v-row align="center" no-gutters>
           <v-slide-x-transition>
@@ -39,6 +39,7 @@ function hideEnquiry() {
 
 <style scoped>
 .card {
+  overflow: auto;
   position: absolute;
   top: 60px;
   left: 60px;

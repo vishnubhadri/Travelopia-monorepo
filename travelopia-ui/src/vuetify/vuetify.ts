@@ -17,12 +17,14 @@ const vuetify = createVuetify({
           surface: '#FFFBFE',
           primary: '#FF7F50', // Attractive primary color
           secondary: '#625B71',
-          error: '#B3261E',
           info: '#2196F3',
-        },
-      },
-    },
-  },
+          success: '#cbf080',
+          warning: '#FFC107',
+          error: '#F44336'
+        }
+      }
+    }
+  }
 })
 
-export default vuetify;
+export default vuetify

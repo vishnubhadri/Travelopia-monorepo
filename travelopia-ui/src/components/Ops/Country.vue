@@ -66,7 +66,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useCountryStore } from '@/stores'
+import { useCountryStore, useSnackbarStore } from '@/stores'
 import type { Country } from '@/interfaces'
 
 const newCountry = ref({
@@ -89,7 +89,7 @@ onMounted(() => {
 // Fetch existing countries from API
 const fetchCountries = async () => {
   try {
-    countries.value = await useCountryStore().getCountryAllList() as Country[]
+    countries.value = (await useCountryStore().getCountryAllList()) as Country[]
   } catch (error) {
     console.error('Error fetching countries:', error)
   }
@@ -117,6 +117,12 @@ const addCountry = () => {
 
   promise
     .then(() => {
+      useSnackbarStore().addMessage({
+        color: 'success',
+        text: 'Country ' + buttonAction.value
+      })
+    })
+    .then(() => {
       newCountry.value = {
         countryName: '',
         countryImageUrl: '',
@@ -125,9 +131,10 @@ const addCountry = () => {
         id: -1
       }
       fetchCountries()
+      buttonAction.value === 'Add'
     })
     .catch((error) => {
-      console.error('Error adding/updating country:', error)
+      useSnackbarStore().addMessage({ text: error.message, color: 'error' })
     })
     .finally(() => {
       isLoading.value = false
@@ -147,13 +154,24 @@ const editCountry = (country: Country) => {
 
 // Delete existing country
 const deleteCountry = async (countryId: number) => {
-  try {
-    isLoading.value = true
-    await useCountryStore().deleteCountry(countryId)
-    fetchCountries()
-    isLoading.value = false
-  } catch (error) {
-    console.error('Error deleting country:', error)
-  }
+  isLoading.value = true
+  useCountryStore()
+    .deleteCountry(countryId)
+    .then(() => {
+      useSnackbarStore().addMessage({
+        color: 'success',
+        text: 'Country deleted'
+      })
+    })
+    .then(fetchCountries)
+    .catch((error) => {
+      useSnackbarStore().addMessage({
+        color: 'error',
+        text: error.message
+      })
+    })
+    .finally(() => {
+      isLoading.value = false
+    })
 }
 </script>

@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue'
-import { defineStore, type Pinia } from 'pinia'
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
 import axios, { type AxiosResponse } from 'axios'
 import type { Country } from '@/interfaces/Country'
 import { COUNTRY, BACKGROUND_STYLE_KEY, OPS_COUNTRY } from '@/config'

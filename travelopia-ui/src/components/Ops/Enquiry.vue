@@ -29,7 +29,7 @@
               <td>{{ enquiry.duration_from }}</td>
               <td>{{ enquiry.duration_to }}</td>
               <td>{{ enquiry.message }}</td>
-              <td>{{ enquiry.stage_id }}</td>
+              <td>{{ getStage(enquiry) }}</td>
               <td>{{ enquiry.number_of_travelers }}</td>
               <td>
                 <v-select
@@ -53,7 +53,7 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
 
-import { useEnquiryStore } from '@/stores'
+import { useEnquiryStore, useVacationStatusStore, useSnackbarStore } from '@/stores'
 import { useCountryStore } from '@/stores'
 
 const statusFlow = computed(() => {
@@ -69,27 +69,50 @@ function statuses(enquiry) {
 }
 
 const countryCache = {}
-
 function getCountries(enquiry) {
   return countryCache[enquiry.id]
+}
+const vacationsCache = {}
+function getStage(enquiry) {
+  return vacationsCache[enquiry.stage_id]
 }
 
 // Fetch existing enquiries from API on component mount
 onMounted(() => {
-  Promise.all([useEnquiryStore().fetchEnquiryStage(), useCountryStore().getCountryAllList()]).then(
-    () => {
+  Promise.all([
+    useEnquiryStore().fetchEnquiryStage(),
+    useCountryStore().getCountryAllList(),
+    useVacationStatusStore().getVacationList()
+  ])
+    .then(() => {
       useCountryStore().allCountry.forEach((country: { id: number; country_name: string }) => {
         countryCache[country.id] = country.country_name
       })
+      useVacationStatusStore().vacations.forEach(
+        (vacation: { id: number; country_name: string }) => {
+          vacationsCache[vacation.id] = vacation.stage_name
+        }
+      )
       useEnquiryStore().getEnquiryList()
-    }
-  )
+    })
+    .catch((error) => {
+      useSnackbarStore().addMessage({ text: error.message, color: 'error' })
+    })
 })
 
 async function getNextStage(enquiry) {
   enquiry.isStatusFetching = true
   useEnquiryStore()
     .updateStage(enquiry.id, enquiry.status_of_enquiry)
+    .then(() => {
+      useSnackbarStore().addMessage({
+        text: 'Status Updated for id:' + enquiry.id,
+        color: 'success'
+      })
+    })
+    .catch(() => {
+      useSnackbarStore().addMessage({ text: 'Error Updated for id:' + enquiry.id, color: 'error' })
+    })
     .finally(() => {
       enquiry.isStatusFetching = false
     })

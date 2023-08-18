@@ -1,18 +1,37 @@
 <template>
   <div>
     <RouterView />
+    <v-snackbar
+      :timeout="timeout"
+      v-model="currentMessage"
+      :color="currentMessage?.color"
+      location="top"
+    >
+      <span style="text-transform: capitalize" variant="text">{{ currentMessage?.text }}</span>
+      <template v-slot:actions>
+        <v-btn variant="text" @click="onSnackbarClose"> Close </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import { watch, onMounted } from 'vue'
-import { useCountryStore } from './stores'
-import { DEFAULT_BACKGROUND } from './config'
+import { RouterView } from 'vue-router'
+import { watch, onMounted, computed, ref } from 'vue'
+import { useCountryStore, useSnackbarStore } from './stores'
+import { DEFAULT_BACKGROUND, SNACKBAR_HIDE_TIME } from './config'
+
+const timeout = ref(SNACKBAR_HIDE_TIME)
 
 onMounted(() => {
   useCountryStore().setBackground(DEFAULT_BACKGROUND)
 })
+
+const currentMessage = computed(() => useSnackbarStore().messages[0])
+
+const onSnackbarClose = () => {
+  useSnackbarStore().removeMessage()
+}
 
 watch(useCountryStore().selectedValues, () => {
   let bg = DEFAULT_BACKGROUND

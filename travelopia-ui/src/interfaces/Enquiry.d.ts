@@ -2,7 +2,7 @@ interface Enquiries {
   full_name: string
   email: string
   country_id: number | null
-  message: string 
+  message: string
   duration_from: Date | null
   duration_to: Date | null
   stage_id: number | null

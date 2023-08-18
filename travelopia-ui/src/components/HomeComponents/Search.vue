@@ -9,6 +9,7 @@
         required
         item-title="country_name"
         item-value="id"
+        :loading="loadingCountries"
         v-model="selectedValues['country_id']"
       ></v-autocomplete>
       <v-row class="mb-2">
@@ -56,16 +57,41 @@
         required
       ></v-text-field>
       <div class="d-flex flex-column">
-        <v-btn color="primary" class="mt-4" block type="submit" @click="submit"> next </v-btn>
-        <v-btn color="secondary" class="mt-4" block @click="resetForm"> Reset </v-btn>
+        <v-btn
+          color="primary"
+          class="mt-4"
+          block
+          type="submit"
+          @click="submit"
+          :disabled="loadingCountries"
+        >
+          next
+        </v-btn>
+        <v-btn color="secondary" class="mt-4" block @click="resetForm" :disabled="loadingCountries">
+          Reset
+        </v-btn>
       </div>
     </v-form>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useCountryStore } from '@/stores'
+
+const checkOutError = ref(false)
+const checkInError = ref(false)
+const loadingCountries = ref(false)
+const emit = defineEmits(['next'])
+
+onMounted(() => {
+  loadingCountries.value = true
+  useCountryStore()
+    .getCountryList()
+    .finally(() => {
+      loadingCountries.value = false
+    })
+})
 
 const country = computed(() => {
   return useCountryStore().country
@@ -73,9 +99,6 @@ const country = computed(() => {
 const selectedValues = computed(() => {
   return useCountryStore().selectedValues
 })
-
-const checkOutError = ref(false)
-const checkInError = ref(false)
 
 const resetForm = () => {
   selectedValues.value['duration_from'] = ''
@@ -91,10 +114,10 @@ function validateForm() {
   const durationFrom = new Date(selectedValues.value['duration_from'])
   const durationTo = new Date(selectedValues.value['duration_to'])
   const today = new Date()
-  checkOutError.value=false;
-  checkInError.value=false;
+  checkOutError.value = false
+  checkInError.value = false
   const errors = []
-  
+
   if (!selectedCountryId) {
     errors.push('Location is required')
   }
@@ -116,7 +139,6 @@ function validateForm() {
   return errors.length === 0
 }
 
-const emit = defineEmits(['next'])
 function submit() {
   if (validateForm()) {
     emit('next', true)
