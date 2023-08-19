@@ -1,4 +1,4 @@
-export const BASE_URL: string = 'http://sankar-pc:3000/'
+export const BASE_URL: string = 'https://travelopia-api-jdb3.onrender.com/'
 
 //API endpoint
 export const COUNTRY: string = `${BASE_URL}countries`
