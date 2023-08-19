@@ -1,3 +1,5 @@
+// netlify/functions/api.js
+
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -17,7 +19,7 @@ app.use(cookieParser());
 app.use(cors())
 
 const environment = argv.env || 'local';
-const configFilePath = path.join(__dirname, 'config', `${environment}.yaml`);
+const configFilePath = path.join(__dirname, '../../config', `${environment}.yaml`);
 try {
     const configFileContent = fs.readFileSync(configFilePath, 'utf8');
     let config = yaml.load(configFileContent);
@@ -27,7 +29,7 @@ try {
     process.exit(1);
 }
 
-const routesRouter = require('./lib/routes/base-router');
+const routesRouter = require('../../lib/routes/base-router');
 app.use('/', routesRouter);
 
 app.listen(config.service.port, () => {
